@@ -1,0 +1,34 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: writingale
+      POSTGRES_USER: writingale
+      POSTGRES_DB: writingale
+    networks:
+      - network
+    volumes:
+      - ./.data/db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  postgraphile:
+    image: graphile/postgraphile
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - network
+    command: [
+      "--connection", "postgres://writingale:writingale@db/writingale"
+    ]
+    ports:
+      - 5000:5000
+
+networks:
+  network:
